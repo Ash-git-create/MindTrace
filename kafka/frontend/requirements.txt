@@ -1,0 +1,13 @@
+streamlit
+pymongo
+pandas
+pytz
+requests
+wordcloud
+matplotlib
+altair
+openai
+python-dotenv
+numpy
+Pillow
+streamlit-autorefresh
