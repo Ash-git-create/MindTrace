@@ -562,9 +562,15 @@ if not df.empty and 'timestamp' in df.columns:
         """, unsafe_allow_html=True)
 
 # --- MAIN PAGE CONTENT ---
+
 # Header image
-header_img = Image.open("images/Dashboard.png")
-st.image(header_img, use_column_width=True)
+header_path = os.path.join("frontend", "images", "Dashboard.png")
+if os.path.exists(header_path):
+    header_img = Image.open(header_path)
+    st.image(header_img, use_column_width=True)
+else:
+    st.warning("Header image not found.")
+
 
 # Calculate insights
 def safe_mode(series, default="N/A"):
