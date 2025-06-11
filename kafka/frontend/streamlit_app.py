@@ -565,7 +565,7 @@ if not df.empty and 'timestamp' in df.columns:
 # Header image
 st.markdown("""
     <div class="header-container">
-        <img src="app/static/dashboard.png" class="header-image" />
+        <img src="images/dashboard.png" class="header-image" />
         <div class="header-title">Mental Health Sentiment Dashboard</div>
     </div>
 """, unsafe_allow_html=True)
