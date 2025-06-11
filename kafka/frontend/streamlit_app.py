@@ -564,12 +564,22 @@ if not df.empty and 'timestamp' in df.columns:
 # --- MAIN PAGE CONTENT ---
 
 # Header image
-header_path = os.path.join("frontend", "images", "Dashboard.png")
-if os.path.exists(header_path):
-    header_img = Image.open(header_path)
+possible_paths = [
+    os.path.join("images", "Dashboard.png"),
+    os.path.join("frontend", "images", "Dashboard.png"),
+    "Dashboard.png"
+]
+
+header_img = None
+for path in possible_paths:
+    if os.path.exists(path):
+        header_img = Image.open(path)
+        break
+
+if header_img:
     st.image(header_img, use_column_width=True)
 else:
-    st.warning("Header image not found.")
+    st.warning("Header image not found at any of the expected locations.")
 
 
 # Calculate insights
