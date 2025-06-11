@@ -563,17 +563,7 @@ if not df.empty and 'timestamp' in df.columns:
 
 # --- MAIN PAGE CONTENT ---
 # Header image
-import os
-from PIL import Image
-
-image_path = "images/dashboard.png"
-if os.path.exists(image_path):
-    header_img = Image.open(image_path)
-    st.image(header_img, use_column_width=True)
-else:
-    st.warning("Dashboard image not found.")
-
-
+header_img = Image.open("dashboard.png")
 
 # Calculate insights
 def safe_mode(series, default="N/A"):
