@@ -563,7 +563,8 @@ if not df.empty and 'timestamp' in df.columns:
 
 # --- MAIN PAGE CONTENT ---
 # Header image
-header_img = Image.open("Dashboard.png")
+header_img = Image.open("images/Dashboard.png")
+st.image(header_img, use_column_width=True)
 
 # Calculate insights
 def safe_mode(series, default="N/A"):
