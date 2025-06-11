@@ -15,6 +15,7 @@ import openai
 from dotenv import load_dotenv
 import numpy as np
 from PIL import Image
+from io import BytesIO
 
 # Set Streamlit page configuration
 st.set_page_config(
@@ -564,22 +565,25 @@ if not df.empty and 'timestamp' in df.columns:
 # --- MAIN PAGE CONTENT ---
 
 # Header image
-possible_paths = [
-    os.path.join("images", "Dashboard.png"),
-    os.path.join("frontend", "images", "Dashboard.png"),
-    "Dashboard.png"
-]
+# Direct URL to the raw image on GitHub
+image_url = "https://raw.githubusercontent.com/Ash-git-create/MindTrace/ed83bf0b65df66a562bb8b195afd8280b23d27b0/kafka/image/Dashboard.png"
 
-header_img = None
-for path in possible_paths:
-    if os.path.exists(path):
-        header_img = Image.open(path)
-        break
-
-if header_img:
-    st.image(header_img, use_column_width=True)
-else:
-    st.warning("Header image not found at any of the expected locations.")
+try:
+    # Fetch the image from GitHub
+    response = requests.get(image_url)
+    response.raise_for_status()  # Check for HTTP errors
+    
+    # Open the image using PIL
+    image = Image.open(BytesIO(response.content))
+    
+    # Display the image in Streamlit
+    st.image(image, use_column_width=True, caption="MindTrace Dashboard")
+    
+except requests.exceptions.RequestException as e:
+    st.error(f"Failed to load image from GitHub: {e}")
+    # Fallback: Create a placeholder image
+    placeholder = Image.new('RGB', (800, 400), color='gray')
+    st.image(placeholder, caption="Image not available", use_column_width=True)
 
 
 # Calculate insights
