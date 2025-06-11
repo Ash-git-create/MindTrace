@@ -563,28 +563,55 @@ if not df.empty and 'timestamp' in df.columns:
         """, unsafe_allow_html=True)
 
 # --- MAIN PAGE CONTENT ---
+import base64
 
+# Header image with increased height and no top margin
+st.markdown("""
+    <style>
+        .header-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin: 0 0 20px 0;
+        }
+        .header-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .header-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
+            color: white;
+            font-size: 36px !important;
+            font-weight: 700 !important;
+            margin-bottom: 0 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 # Header image
 # Direct URL to the raw image on GitHub
 image_url = "https://raw.githubusercontent.com/Ash-git-create/MindTrace/ed83bf0b65df66a562bb8b195afd8280b23d27b0/kafka/image/Dashboard.png"
 
-try:
-    # Fetch the image from GitHub
-    response = requests.get(image_url)
-    response.raise_for_status()  # Check for HTTP errors
-    
-    # Open the image using PIL
-    image = Image.open(BytesIO(response.content))
-    
-    # Display the image in Streamlit
-    st.image(image, use_column_width=True, caption="MindTrace Dashboard")
-    
-except requests.exceptions.RequestException as e:
-    st.error(f"Failed to load image from GitHub: {e}")
-    # Fallback: Create a placeholder image
-    placeholder = Image.new('RGB', (800, 400), color='gray')
-    st.image(placeholder, caption="Image not available", use_column_width=True)
+response = requests.get(image_url)
+image = Image.open(BytesIO(response.content))
+buffered = BytesIO()
+image.save(buffered, format="PNG")
+encoded_image = base64.b64encode(buffered.getvalue()).decode()
 
+st.markdown(f"""
+    <div class="header-container">
+        <img src="data:image/png;base64,{encoded_image}" class="header-image" />
+        <div class="header-title">Mental Health Sentiment Dashboard</div>
+    </div>
+""", unsafe_allow_html=True)
 
 # Calculate insights
 def safe_mode(series, default="N/A"):
