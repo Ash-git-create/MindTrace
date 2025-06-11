@@ -563,10 +563,16 @@ if not df.empty and 'timestamp' in df.columns:
 
 # --- MAIN PAGE CONTENT ---
 # Header image
+import os
 from PIL import Image
-st.markdown("<h1 class='main-header'>Mental Health Sentiment Dashboard</h1>", unsafe_allow_html=True)
-header_img = Image.open("images/dashboard.png")
-st.image(header_img, use_column_width=True)
+
+image_path = "images/dashboard.png"
+if os.path.exists(image_path):
+    header_img = Image.open(image_path)
+    st.image(header_img, use_column_width=True)
+else:
+    st.warning("Dashboard image not found.")
+
 
 
 # Calculate insights
