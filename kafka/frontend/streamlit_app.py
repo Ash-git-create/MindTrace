@@ -563,12 +563,11 @@ if not df.empty and 'timestamp' in df.columns:
 
 # --- MAIN PAGE CONTENT ---
 # Header image
-st.markdown("""
-    <div class="header-container">
-        <img src="images/dashboard.png" class="header-image" />
-        <div class="header-title">Mental Health Sentiment Dashboard</div>
-    </div>
-""", unsafe_allow_html=True)
+from PIL import Image
+st.markdown("<h1 class='main-header'>Mental Health Sentiment Dashboard</h1>", unsafe_allow_html=True)
+header_img = Image.open("images/dashboard.png")
+st.image(header_img, use_column_width=True)
+
 
 # Calculate insights
 def safe_mode(series, default="N/A"):
@@ -788,6 +787,47 @@ with feed_tabs[0]:
             st.info("No news articles found with current filters")
     except Exception as e:
         st.error(f"Error displaying news feed: {str(e)}")
+
+# News Feed
+with feed_tabs[1]:
+    try:
+        if 'source' in filtered_df.columns:
+            news_df = filtered_df[filtered_df['source'] == 'news'].sort_values('timestamp', ascending=False).head(10)
+        else:
+            news_df = pd.DataFrame()
+        
+        if not news_df.empty:
+            for idx, row in news_df.iterrows():
+                sentiment_class = row.get('sentiment', '').lower()
+                is_new = (datetime.now(pytz.utc) - row['timestamp']).total_seconds() < 3600 if pd.notna(row.get('timestamp')) else False
+                
+                with st.container():
+                    st.markdown(f"<div class='feed-item {'pulse' if is_new else ''}'>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='feed-title'>{row.get('title', 'No title')}</div>", unsafe_allow_html=True)
+                    
+                    if 'sentiment' in row:
+                        st.markdown(f"<div class='feed-sentiment {sentiment_class}'>{row['sentiment']}</div>", unsafe_allow_html=True)
+                    
+                    if 'source' in row:
+                        st.markdown(f"<div style='font-size: 12px; color: var(--text-light); margin-bottom: 8px;'>{row['source'].capitalize()}</div>", unsafe_allow_html=True)
+                    
+                    if 'text' in row and pd.notna(row['text']):
+                        preview = (row['text'][:200] + '...') if len(row['text']) > 200 else row['text']
+                        st.markdown(f"<div style='font-size: 14px; margin-bottom: 8px;'>{preview}</div>", unsafe_allow_html=True)
+                    
+                    if 'url' in row and pd.notna(row['url']):
+                        st.markdown(f"<a href='{row['url']}' target='_blank' style='font-size: 12px; color: var(--primary);'>Read Article →</a>", unsafe_allow_html=True)
+                    
+                    if 'timestamp' in row and pd.notna(row['timestamp']):
+                        time_str = row['timestamp'].strftime('%Y-%m-%d %H:%M')
+                        st.markdown(f"<div style='font-size: 11px; color: var(--text-light); margin-top: 8px;'>{time_str}</div>", unsafe_allow_html=True)
+                    
+                    st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.info("No news articles found with current filters")
+    except Exception as e:
+        st.error(f"Error displaying news feed: {str(e)}")
+
 
 # Sentiment Analysis Tab
 with feed_tabs[2]:
